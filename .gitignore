@@ -1,0 +1,22 @@
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Backend (Laravel)
+backend/vendor/
+backend/node_modules/
+backend/storage/*.key
+
+# Frontend (Next.js)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
