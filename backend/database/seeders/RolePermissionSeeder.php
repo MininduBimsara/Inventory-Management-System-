@@ -51,13 +51,7 @@ class RolePermissionSeeder extends Seeder
 
         $staffRole->syncPermissions([
             'cupboard.view',
-            'cupboard.create',
-            'cupboard.update',
-            'cupboard.delete',
             'place.view',
-            'place.create',
-            'place.update',
-            'place.delete',
             'item.view',
             'item.create',
             'item.update',

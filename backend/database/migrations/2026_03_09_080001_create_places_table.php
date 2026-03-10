@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('places', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cupboard_id')->index()->constrained('cupboards')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('cupboard_id')->index()->constrained('cupboards')->cascadeOnUpdate()->restrictOnDelete();
             $table->string('name');
             $table->string('code');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
+
+            $table->unique(['cupboard_id', 'code']);
         });
     }
 
