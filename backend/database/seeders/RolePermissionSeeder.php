@@ -55,7 +55,6 @@ class RolePermissionSeeder extends Seeder
             'item.view',
             'item.create',
             'item.update',
-            'item.delete',
             'item.adjust-quantity',
             'borrow.view',
             'borrow.create',

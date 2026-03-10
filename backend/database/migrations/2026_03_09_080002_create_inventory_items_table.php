@@ -14,14 +14,15 @@ return new class extends Migration
         Schema::create('inventory_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('place_id')->index()->constrained('places')->cascadeOnUpdate()->restrictOnDelete();
-            $table->string('item_name');
+            $table->string('name');
             $table->string('code')->unique();
-            $table->integer('quantity');
-            $table->string('serial_number')->nullable();
+            $table->integer('quantity')->default(0);
+            $table->string('serial_number')->nullable()->unique();
             $table->string('image_path')->nullable();
-            $table->string('description')->nullable();
-            $table->string('status');
+            $table->text('description')->nullable();
+            $table->string('status')->default('available');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

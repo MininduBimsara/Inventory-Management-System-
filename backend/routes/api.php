@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CupboardController;
+use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\UserManagementController;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +37,14 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/{place}', [PlaceController::class, 'show'])->middleware('permission:place.view');
             Route::put('/{place}', [PlaceController::class, 'update'])->middleware('permission:place.update');
             Route::delete('/{place}', [PlaceController::class, 'destroy'])->middleware('permission:place.delete');
+        });
+
+        Route::prefix('items')->group(function (): void {
+            Route::get('/', [ItemController::class, 'index'])->middleware('permission:item.view');
+            Route::post('/', [ItemController::class, 'store'])->middleware('permission:item.create');
+            Route::get('/{item}', [ItemController::class, 'show'])->middleware('permission:item.view');
+            Route::put('/{item}', [ItemController::class, 'update'])->middleware('permission:item.update');
+            Route::delete('/{item}', [ItemController::class, 'destroy'])->middleware('permission:item.delete');
         });
     });
 });
