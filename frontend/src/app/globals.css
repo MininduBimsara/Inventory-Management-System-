@@ -1,26 +1,318 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #f8f4ec;
+  --ink: #12251f;
+  --panel: #fffaf1;
+  --line: #d0c4b4;
+  --accent: #146356;
+  --accent-2: #ff7b00;
+  --danger: #b42318;
+  --ok: #027a48;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-space-grotesk), sans-serif;
+  background:
+    radial-gradient(circle at 15% 20%, #ffd7a233 0, transparent 32%),
+    radial-gradient(circle at 75% 5%, #2b8a3e22 0, transparent 24%),
+    linear-gradient(140deg, #f8f4ec 0%, #eef7f1 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1.5rem;
+  padding: 2.5rem;
+}
+
+.hero-card,
+.login-card,
+.panel-card {
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: color-mix(in srgb, var(--panel) 86%, white);
+  box-shadow: 0 20px 50px #4e3f2a18;
+}
+
+.hero-card {
+  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: lift-in 0.45s ease-out both;
+}
+
+.hero-card h1 {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  line-height: 1.05;
+  margin-bottom: 1rem;
+}
+
+.hero-card p {
+  max-width: 42ch;
+  color: color-mix(in srgb, var(--ink) 75%, white);
+}
+
+.login-card {
+  align-self: center;
+  padding: 2rem;
+  display: grid;
+  gap: 0.7rem;
+  animation: lift-in 0.6s ease-out both;
+}
+
+.login-card button,
+button {
+  cursor: pointer;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(120deg, var(--accent), #1d8875);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.66rem 1rem;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button.danger {
+  background: linear-gradient(120deg, #9f1f17, var(--danger));
+}
+
+input,
+select,
+textarea {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.62rem 0.75rem;
+  font: inherit;
+  background: #fff;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+}
+
+.side-panel {
+  border-right: 1px solid var(--line);
+  padding: 1.4rem;
+  background: linear-gradient(180deg, #f3efe5, #e7f3ea);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+}
+
+.side-panel h1 {
+  font-size: 1.35rem;
+}
+
+.side-panel p {
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 70%, white);
+}
+
+.nav-link {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  margin-bottom: 0.55rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  animation: reveal 0.35s ease-out both;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  border-color: var(--line);
+  background: #ffffffaa;
+}
+
+.session-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 0.8rem;
+  background: #fff9f0;
+}
+
+.main-panel {
+  padding: 1.25rem;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: clamp(1.45rem, 3vw, 2.2rem);
+}
+
+.panel-header p {
+  margin-top: 0.2rem;
+  color: color-mix(in srgb, var(--ink) 70%, white);
+}
+
+.panel-content {
+  display: grid;
+  gap: 1rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.85rem;
+}
+
+.metric-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(160deg, #fffdf8, #f6fdf9);
+  padding: 1rem;
+}
+
+.metric-card h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--ink) 70%, white);
+}
+
+.metric-card p {
+  margin: 0.2rem 0 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.split-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.form-grid {
+  display: grid;
+  gap: 0.6rem;
+  padding: 1rem;
+}
+
+.panel-card {
+  padding: 1rem;
+}
+
+.table-grid {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-grid th,
+.table-grid td {
+  border-top: 1px solid var(--line);
+  text-align: left;
+  padding: 0.65rem 0.5rem;
+  vertical-align: top;
+  font-family: var(--font-ibm-plex-mono), monospace;
+  font-size: 0.82rem;
+}
+
+.table-grid pre {
+  white-space: pre-wrap;
+  margin: 0;
+  max-width: 260px;
+}
+
+.button-row,
+.button-wrap {
+  display: flex;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.list-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.list-grid li {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.success-text {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.error-text {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.muted-text {
+  color: color-mix(in srgb, var(--ink) 65%, white);
+}
+
+.screen-center {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.reveal {
+  animation: reveal 0.4s ease-out both;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lift-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .login-screen,
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .side-panel {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
 }
