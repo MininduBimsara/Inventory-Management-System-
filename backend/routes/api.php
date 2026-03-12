@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ActivityLogController;
+use App\Http\Controllers\Api\BorrowController;
 use App\Http\Controllers\Api\CupboardController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\PlaceController;
@@ -59,6 +61,17 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('/restore-damaged', [ItemController::class, 'restoreFromDamaged'])->middleware('permission:status.update');
                 Route::post('/restore-missing', [ItemController::class, 'restoreFromMissing'])->middleware('permission:status.update');
             });
+        });
+
+        Route::prefix('borrows')->group(function (): void {
+            Route::get('/', [BorrowController::class, 'index'])->middleware('permission:borrow.view');
+            Route::post('/', [BorrowController::class, 'store'])->middleware('permission:borrow.create');
+            Route::get('/{borrow}', [BorrowController::class, 'show'])->middleware('permission:borrow.view');
+            Route::post('/{borrow}/return', [BorrowController::class, 'returnItems'])->middleware('permission:borrow.return');
+        });
+
+        Route::prefix('activity-logs')->group(function (): void {
+            Route::get('/', [ActivityLogController::class, 'index'])->middleware('permission:audit.view');
         });
     });
 });

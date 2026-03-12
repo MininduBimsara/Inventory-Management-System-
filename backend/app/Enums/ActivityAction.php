@@ -10,6 +10,13 @@ namespace App\Enums;
  */
 enum ActivityAction: string
 {
+    // Item lifecycle
+    case ITEM_CREATED = 'item_created';
+    case ITEM_UPDATED = 'item_updated';
+
+    // User lifecycle
+    case USER_CREATED = 'user_created';
+
     // Quantity mutations
     case QUANTITY_INCREASED = 'quantity_increased';
     case QUANTITY_DECREASED = 'quantity_decreased';
@@ -23,9 +30,18 @@ enum ActivityAction: string
     case RESTORED_FROM_DAMAGED = 'restored_from_damaged';
     case RESTORED_FROM_MISSING = 'restored_from_missing';
 
+    // Borrow and return workflow
+    case BORROW_CREATED = 'borrow_created';
+    case RETURN_PROCESSED = 'return_processed';
+    case RETURN_DAMAGED_RECORDED = 'return_damaged_recorded';
+    case RETURN_MISSING_RECORDED = 'return_missing_recorded';
+
     public function label(): string
     {
         return match ($this) {
+            self::ITEM_CREATED => 'Item Created',
+            self::ITEM_UPDATED => 'Item Updated',
+            self::USER_CREATED => 'User Created',
             self::QUANTITY_INCREASED => 'Quantity Increased',
             self::QUANTITY_DECREASED => 'Quantity Decreased',
             self::QUANTITY_ADJUSTED => 'Quantity Adjusted',
@@ -35,6 +51,10 @@ enum ActivityAction: string
             self::MARKED_MISSING => 'Marked as Missing',
             self::RESTORED_FROM_DAMAGED => 'Restored from Damaged',
             self::RESTORED_FROM_MISSING => 'Restored from Missing',
+            self::BORROW_CREATED => 'Borrow Transaction Created',
+            self::RETURN_PROCESSED => 'Borrow Return Processed',
+            self::RETURN_DAMAGED_RECORDED => 'Damaged Return Recorded',
+            self::RETURN_MISSING_RECORDED => 'Missing Return Recorded',
         };
     }
 }

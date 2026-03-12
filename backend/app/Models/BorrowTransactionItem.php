@@ -12,11 +12,15 @@ class BorrowTransactionItem extends Model
 
     protected $fillable = [
         'borrow_transaction_id',
-        'inventory_item_id',
+        'item_id',
         'quantity_borrowed',
         'quantity_returned',
-        'line_status',
-        'remarks',
+        'item_condition_on_return',
+    ];
+
+    protected $casts = [
+        'quantity_borrowed' => 'integer',
+        'quantity_returned' => 'integer',
     ];
 
     public function borrowTransaction(): BelongsTo
@@ -26,6 +30,21 @@ class BorrowTransactionItem extends Model
 
     public function inventoryItem(): BelongsTo
     {
-        return $this->belongsTo(InventoryItem::class);
+        return $this->belongsTo(InventoryItem::class, 'item_id');
+    }
+
+    public function item(): BelongsTo
+    {
+        return $this->inventoryItem();
+    }
+
+    public function remainingToReturn(): int
+    {
+        return max(0, $this->quantity_borrowed - $this->quantity_returned);
+    }
+
+    public function isFullyReturned(): bool
+    {
+        return $this->remainingToReturn() === 0;
     }
 }

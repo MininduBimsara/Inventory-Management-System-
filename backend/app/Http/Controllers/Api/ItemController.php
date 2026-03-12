@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ActivityAction;
 use App\Enums\InventoryItemStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Items\DecreaseQuantityRequest;
@@ -13,6 +14,7 @@ use App\Http\Requests\Items\RestoreFromMissingRequest;
 use App\Http\Requests\Items\StoreInventoryItemRequest;
 use App\Http\Requests\Items\UpdateInventoryItemRequest;
 use App\Http\Resources\InventoryItemResource;
+use App\Models\ActivityLog;
 use App\Models\InventoryItem;
 use App\Services\InventoryItemImageService;
 use App\Services\QuantityManagementService;
@@ -71,6 +73,23 @@ class ItemController extends Controller
 
         $item = InventoryItem::query()->create($payload);
 
+        ActivityLog::query()->create([
+            'user_id' => (int) $request->user()->getAuthIdentifier(),
+            'action' => ActivityAction::ITEM_CREATED->value,
+            'entity_type' => InventoryItem::class,
+            'entity_id' => $item->id,
+            'old_values' => null,
+            'new_values' => [
+                'name' => $item->name,
+                'code' => $item->code,
+                'place_id' => $item->place_id,
+                'quantity' => $item->quantity,
+                'status' => $item->status,
+                'manual_status_reason' => $item->manual_status_reason,
+            ],
+            'description' => sprintf('Item %s (%s) created.', $item->name, $item->code),
+        ]);
+
         return response()->json([
             'message' => 'Item created successfully.',
             'data' => new InventoryItemResource($item->load(['place:id,cupboard_id,name,code', 'place.cupboard:id,name,code'])),
@@ -87,6 +106,18 @@ class ItemController extends Controller
 
     public function update(UpdateInventoryItemRequest $request, InventoryItem $item): JsonResponse
     {
+        $before = [
+            'name' => $item->name,
+            'code' => $item->code,
+            'place_id' => $item->place_id,
+            'quantity' => $item->quantity,
+            'status' => $item->status,
+            'manual_status_reason' => $item->manual_status_reason,
+            'serial_number' => $item->serial_number,
+            'description' => $item->description,
+            'image_path' => $item->image_path,
+        ];
+
         $payload = $request->validated();
 
         if ($request->hasFile('image')) {
@@ -96,6 +127,28 @@ class ItemController extends Controller
         unset($payload['image']);
 
         $item->update($payload);
+
+        $item->refresh();
+
+        ActivityLog::query()->create([
+            'user_id' => (int) $request->user()->getAuthIdentifier(),
+            'action' => ActivityAction::ITEM_UPDATED->value,
+            'entity_type' => InventoryItem::class,
+            'entity_id' => $item->id,
+            'old_values' => $before,
+            'new_values' => [
+                'name' => $item->name,
+                'code' => $item->code,
+                'place_id' => $item->place_id,
+                'quantity' => $item->quantity,
+                'status' => $item->status,
+                'manual_status_reason' => $item->manual_status_reason,
+                'serial_number' => $item->serial_number,
+                'description' => $item->description,
+                'image_path' => $item->image_path,
+            ],
+            'description' => sprintf('Item %s (%s) updated.', $item->name, $item->code),
+        ]);
 
         return response()->json([
             'message' => 'Item updated successfully.',

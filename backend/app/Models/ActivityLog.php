@@ -27,6 +27,8 @@ class ActivityLog extends Model
 
     protected $casts = [
         'created_at' => 'datetime',
+        'old_values' => 'array',
+        'new_values' => 'array',
     ];
 
     public function user(): BelongsTo

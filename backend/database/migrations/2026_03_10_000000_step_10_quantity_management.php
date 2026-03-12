@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -26,8 +27,10 @@ return new class extends Migration
             $table->text('manual_status_reason')->nullable()->after('status');
 
             // Add CHECK constraint to prevent negative quantities at database level
-            // This is a safety net against application bugs
-            $table->check('quantity >= 0');
+            // This is a safety net against application bugs (skipped for SQLite test env)
+            if (DB::getDriverName() !== 'sqlite') {
+                $table->check('quantity >= 0');
+            }
 
             // Add indexes for common query patterns
             // Used in status filtering and availability checks

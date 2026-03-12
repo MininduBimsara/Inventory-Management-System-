@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ActivityAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\AssignUserRoleRequest;
 use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 
@@ -42,6 +44,20 @@ class UserManagementController extends Controller
         ]);
 
         $user->syncRoles([$validated['role']]);
+
+        ActivityLog::query()->create([
+            'user_id' => (int) $request->user()->getAuthIdentifier(),
+            'action' => ActivityAction::USER_CREATED->value,
+            'entity_type' => User::class,
+            'entity_id' => $user->id,
+            'old_values' => null,
+            'new_values' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'roles' => $user->getRoleNames()->values()->all(),
+            ],
+            'description' => sprintf('User %s created.', $user->email),
+        ]);
 
         return response()->json([
             'message' => 'User created successfully.',

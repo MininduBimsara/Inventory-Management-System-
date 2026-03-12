@@ -17,10 +17,15 @@ return new class extends Migration
             $table->string('borrower_contact');
             $table->date('borrow_date');
             $table->date('expected_return_date');
-            $table->date('return_date')->nullable();
+            $table->date('actual_return_date')->nullable();
             $table->string('status');
             $table->foreignId('created_by')->index()->constrained('users')->cascadeOnUpdate()->restrictOnDelete();
             $table->timestamps();
+
+            $table->index('status');
+            $table->index('borrow_date');
+            $table->index('expected_return_date');
+            $table->index(['status', 'expected_return_date']);
         });
     }
 

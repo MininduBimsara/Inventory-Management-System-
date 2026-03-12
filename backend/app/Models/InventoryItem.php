@@ -62,7 +62,7 @@ class InventoryItem extends Model
 
     public function borrowTransactionItems(): HasMany
     {
-        return $this->hasMany(BorrowTransactionItem::class);
+        return $this->hasMany(BorrowTransactionItem::class, 'item_id');
     }
 
     /**
