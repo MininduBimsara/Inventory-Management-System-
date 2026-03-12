@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\InventoryItemStatus;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,14 @@ class InventoryItemResource extends JsonResource
             'description' => $this->description,
             'place_id' => $this->place_id,
             'status' => $this->status,
+            'manual_status_reason' => $this->manual_status_reason,
+            'status_info' => [
+                'value' => $this->status,
+                'is_automatic' => $this->hasAutomaticStatus(),
+                'is_manual' => $this->hasManualStatus(),
+                'is_available' => $this->isAvailable(),
+                'is_in_stock' => $this->isInStock(),
+            ],
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'place' => $this->whenLoaded('place', function (): array {

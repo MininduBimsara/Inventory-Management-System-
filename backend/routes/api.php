@@ -45,6 +45,20 @@ Route::prefix('v1')->group(function (): void {
             Route::get('/{item}', [ItemController::class, 'show'])->middleware('permission:item.view');
             Route::put('/{item}', [ItemController::class, 'update'])->middleware('permission:item.update');
             Route::delete('/{item}', [ItemController::class, 'destroy'])->middleware('permission:item.delete');
+
+            // Step 10: Quantity Management
+            Route::prefix('{item}/quantity')->group(function (): void {
+                Route::post('/increase', [ItemController::class, 'increaseQuantity'])->middleware('permission:item.adjust-quantity');
+                Route::post('/decrease', [ItemController::class, 'decreaseQuantity'])->middleware('permission:item.adjust-quantity');
+            });
+
+            // Step 10: Status Management
+            Route::prefix('{item}/status')->group(function (): void {
+                Route::post('/damaged', [ItemController::class, 'markAsDamaged'])->middleware('permission:status.update');
+                Route::post('/missing', [ItemController::class, 'markAsMissing'])->middleware('permission:status.update');
+                Route::post('/restore-damaged', [ItemController::class, 'restoreFromDamaged'])->middleware('permission:status.update');
+                Route::post('/restore-missing', [ItemController::class, 'restoreFromMissing'])->middleware('permission:status.update');
+            });
         });
     });
 });

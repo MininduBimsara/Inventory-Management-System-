@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\InventoryItemStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +14,10 @@ class InventoryItem extends Model
     use HasFactory;
     use SoftDeletes;
 
+    /**
+     * Legacy status constants - kept for backward compatibility during Step 10 transition
+     * These will be phased out in favor of InventoryItemStatus enum
+     */
     public const STATUS_AVAILABLE = 'available';
     public const STATUS_LOW_STOCK = 'low_stock';
     public const STATUS_OUT_OF_STOCK = 'out_of_stock';
@@ -39,6 +44,7 @@ class InventoryItem extends Model
         'image_path',
         'description',
         'status',
+        'manual_status_reason',
     ];
 
     /**
@@ -46,6 +52,7 @@ class InventoryItem extends Model
      */
     protected $casts = [
         'quantity' => 'integer',
+        'status' => 'string', // Will transition to enum cast after full Step 10 migration
     ];
 
     public function place(): BelongsTo
@@ -56,5 +63,43 @@ class InventoryItem extends Model
     public function borrowTransactionItems(): HasMany
     {
         return $this->hasMany(BorrowTransactionItem::class);
+    }
+
+    /**
+     * Check if item status is automatic (calculated from quantity)
+     */
+    public function hasAutomaticStatus(): bool
+    {
+        return in_array($this->status, [
+            InventoryItemStatus::IN_STORE->value,
+            InventoryItemStatus::BORROWED->value,
+        ]);
+    }
+
+    /**
+     * Check if item status is manual (explicit staff action)
+     */
+    public function hasManualStatus(): bool
+    {
+        return in_array($this->status, [
+            InventoryItemStatus::DAMAGED->value,
+            InventoryItemStatus::MISSING->value,
+        ]);
+    }
+
+    /**
+     * Check if item is in stock (available for use)
+     */
+    public function isInStock(): bool
+    {
+        return $this->quantity > 0 && !$this->hasManualStatus();
+    }
+
+    /**
+     * Check if item is available (not borrowed and not manually marked as damaged/missing)
+     */
+    public function isAvailable(): bool
+    {
+        return $this->status === InventoryItemStatus::IN_STORE->value;
     }
 }
